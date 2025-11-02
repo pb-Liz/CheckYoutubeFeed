@@ -8,7 +8,9 @@ import { Client, TextChannel } from "discord.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+console.log(`__dirname ${__dirname}`);
 const cachePath = path.join(__dirname, "../data/cache.json");
+console.log(`cachePath ${cachePath}`);
 
 const parser = new Parser();
 let cache: Record<string, string> = {};
@@ -45,6 +47,13 @@ const startWatcher = (client: Client) => {
 
           const cacheKey = `${discordChannelId}_${ytId}`;
           if (cache[cacheKey] === videoId) continue; // 同じならスキップ
+
+          const isFirst = !(cacheKey in cache);
+          if (isFirst) {
+            console.log(`初回検出: ${cacheKey} - ${videoId}`);
+            updateCache(cacheKey, videoId); // 初回はキャッシュ更新のみ
+            continue;
+          }
           updateCache(cacheKey, videoId); // 新しい動画なら更新
 
           const channel = client.channels.cache.get(discordChannelId) as TextChannel;
