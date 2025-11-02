@@ -2,4 +2,4 @@
 /dist
 .env
 .gitignore
-/data
+/src//data
