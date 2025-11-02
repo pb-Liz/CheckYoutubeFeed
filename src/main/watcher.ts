@@ -30,7 +30,7 @@ function updateCache(key: string, value: string) {
 }
 
 const startWatcher = (client: Client) => {
-  const job = schedule.scheduleJob("*/1 * * * *", async () => {
+  const job = schedule.scheduleJob("*/5 * * * *", async () => {
     const watchlistPath = path.join(__dirname, "../data/watchlist.json");
     if (!fs.existsSync(watchlistPath)) return;
     const list = JSON.parse(fs.readFileSync(watchlistPath, "utf8"));
@@ -65,7 +65,7 @@ const startWatcher = (client: Client) => {
     }
   });
 
-  console.log("🔔 YouTube監視ジョブ開始 (1分ごと)");
+  console.log("🔔 YouTube監視ジョブ開始 (5分ごと)");
   job.invoke();
 }
 
