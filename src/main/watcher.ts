@@ -2,15 +2,17 @@ import Parser from "rss-parser";
 import schedule from "node-schedule";
 import fs from "fs";
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { Client, TextChannel } from "discord.js";
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log(`__dirname ${__dirname}`);
-const cachePath = path.join(__dirname, "../data/cache.json");
-console.log(`cachePath ${cachePath}`);
+const baseDir = process.env.NODE_ENV === "production"
+  ? "/app/data"
+  : path.join(__dirname, "../data");
+
+const cachePath = path.join(baseDir, "cache.json");
 
 const parser = new Parser();
 let cache: Record<string, string> = {};
@@ -31,7 +33,7 @@ function updateCache(key: string, value: string) {
 
 const startWatcher = (client: Client) => {
   const job = schedule.scheduleJob("*/5 * * * *", async () => {
-    const watchlistPath = path.join(__dirname, "../data/watchlist.json");
+    const watchlistPath = path.join(baseDir, "watchlist.json");
     if (!fs.existsSync(watchlistPath)) return;
     const list = JSON.parse(fs.readFileSync(watchlistPath, "utf8"));
 

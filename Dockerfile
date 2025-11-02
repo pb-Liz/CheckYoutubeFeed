@@ -20,12 +20,13 @@ ENV NODE_ENV=production
 # 実行に必要なファイルだけコピー
 COPY --from=builder /app/dist ./dist
 COPY package*.json ./
-COPY src/data ./dist/data
+COPY src/data ./default-data
 COPY .env .env
 
 RUN npm ci --omit=dev
 
-# データ保存用ディレクトリ（永続化対象）
+# データ永続化ディレクトリ
 VOLUME ["/app/data"]
 
-CMD ["node", "dist/main/index.js"]
+# 起動時に /app/data が空なら初期データをコピー
+ENTRYPOINT ["/bin/sh", "-c", "cp -n -r /app/default-data/* /app/data/ 2>/dev/null || true && node dist/main/index.js"]

@@ -1,5 +1,5 @@
-import { CacheType, Interaction } from "discord.js";
-import { getChannelIdFromHandle } from "../main/index.js";
+import { CacheType, Interaction, MessageFlags } from "discord.js";
+import { ephemeraled, getChannelIdFromHandle } from "../main/index.js";
 import fs from "fs";
 
 const RemoveCommand = async (
@@ -26,13 +26,13 @@ const RemoveCommand = async (
   }
 
   if (!channelIdMatch || !list[channelId]) {
-    await interaction.reply("⚠️ 指定されたチャンネルは登録されていません。");
+    await interaction.reply({ content: "⚠️ 指定されたチャンネルは登録されていません。", flags: ephemeraled ?  MessageFlags.Ephemeral : undefined });
     return;
   }
 
   list[channelId] = list[channelId].filter((id: string) => id !== channelIdMatch);
   fs.writeFileSync(watchlistPath, JSON.stringify(list, null, 2));
-  await interaction.reply(`🗑️ 削除しました: ${url}`);
+  await interaction.reply({ content: `🗑️ 削除しました: ${url}`, flags: ephemeraled ?  MessageFlags.Ephemeral : undefined });
 }
 
 export default RemoveCommand;

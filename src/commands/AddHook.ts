@@ -1,6 +1,18 @@
-import { CacheType, Interaction } from "discord.js";
-import { getChannelIdFromHandle } from "../main/index.js";
+import { CacheType, Interaction, MessageFlags } from "discord.js";
+import { ephemeraled, getChannelIdFromHandle } from "../main/index.js";
 import fs from "fs";
+import path from 'path';
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const baseDir = process.env.NODE_ENV === "production"
+  ? "/app/data"
+  : path.join(__dirname, "../data");
+
+const configPath = path.join(baseDir, "guildConfigs.json");
+const loadConfig = () => JSON.parse(fs.readFileSync(configPath, "utf8"));
 
 const AddCommand = async (
   interaction: Interaction<CacheType>,
@@ -9,7 +21,15 @@ const AddCommand = async (
 ) => {
   if (!interaction.isChatInputCommand()) return;
 
-  const { options, channelId } = interaction;
+  const { options } = interaction;
+  const config = loadConfig();
+  const channelId = config[interaction.guildId!];
+
+  if (!channelId) {
+    await interaction.reply({ content: "❌ このサーバーでは通知先が設定されていません。先に /init コマンドを実行してください。", flags: ephemeraled ?  MessageFlags.Ephemeral : undefined});
+    return;
+  }
+
   const url = options.getString("url", true);
   let channelIdMatch: string | undefined = undefined;
 
@@ -29,19 +49,19 @@ const AddCommand = async (
 
   if (interaction) {
     if (!channelIdMatch) {
-      await interaction.reply("❌ チャンネルIDを取得できませんでした。URLを確認してください。");
+      await interaction.reply({ content: "❌ チャンネルIDを取得できませんでした。URLを確認してください。", flags: ephemeraled ?  MessageFlags.Ephemeral : undefined });
       return;
     }
 
     if (!list[channelId]) list[channelId] = [];
     if (list[channelId].includes(channelIdMatch)) {
-      await interaction.reply("⚠️ すでに登録されています。");
+      await interaction.reply({ content: "⚠️ すでに登録されています。", flags: ephemeraled ?  MessageFlags.Ephemeral : undefined });
       return;
     }
 
     list[channelId].push(channelIdMatch);
     fs.writeFileSync(watchlistPath, JSON.stringify(list, null, 2));
-    await interaction.reply(`✅ フックに追加しました！\nhttps://www.youtube.com/channel/${channelIdMatch}`);
+    await interaction.reply({ content: `✅ フックに追加しました！\nhttps://www.youtube.com/channel/${channelIdMatch}`, flags: ephemeraled ?  MessageFlags.Ephemeral : undefined});
   }
 }
 
