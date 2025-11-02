@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  youtube-bot:
+    build: .
+    container_name: youtube-bot
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data    # 監視リストの永続化
+    environment:
+      - TZ=Asia/Tokyo
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"

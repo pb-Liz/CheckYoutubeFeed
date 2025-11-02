@@ -1,0 +1,26 @@
+{
+  "name": "checkyoutubefeed",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main/index.js"
+  },
+  "dependencies": {
+    "@gonetone/get-youtube-id-by-url": "^2.0.0",
+    "discord.js": "^14.24.2",
+    "dotenv": "^17.2.3",
+    "node-schedule": "^2.1.1",
+    "rss-parser": "^3.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.2",
+    "@types/node-schedule": "^2.1.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
