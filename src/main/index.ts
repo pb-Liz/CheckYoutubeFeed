@@ -55,6 +55,9 @@ if (loggerLevel() === "debug") {
   console.log("======================");
 }
 
+const configPath = path.join(baseDir, "guildConfigs.json");
+const loadConfig = () => JSON.parse(fs.readFileSync(configPath, "utf8"));
+
 (async () => {
   console.log("Starting bot...");
   client.login(TOKEN).then(() => {
@@ -80,7 +83,8 @@ const rest = new REST({ version: "10" }).setToken(TOKEN);
 
 (async () => {
   
-  for (const gid of GUILD_ID) {
+  const config = loadConfig();
+  for (const gid of Object.keys(config)) {
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, gid), { body: [] });
     console.log(`コマンドを初期化しました。 Guild ID: ${gid}`);
     // await rest.put(Routes.applicationGuildCommands(CLIENT_ID, gid), { body: commands });

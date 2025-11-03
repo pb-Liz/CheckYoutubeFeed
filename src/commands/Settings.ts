@@ -2,7 +2,7 @@ import { Interaction, CacheType } from "discord.js";
 import fs from "fs";
 import path from 'path';
 import { fileURLToPath } from "url";
-import { ADMIN } from "../main";
+import { ADMIN } from "../main/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +13,7 @@ const baseDir = process.env.NODE_ENV === "production"
 
 const configPath = path.join(baseDir, "guildConfigs.json");
 const loadConfig = (path: string) => JSON.parse(fs.readFileSync(path, "utf8"));
-const saveConfig = (path: string, data: object) => fs.writeFileSync(configPath, JSON.stringify(data, null, 2));
+const saveConfig = (path: string, data: object) => fs.writeFileSync(path, JSON.stringify(data, null, 2));
 
 const InitCommand = async (interaction: Interaction<CacheType>) => {
   if (!interaction.isChatInputCommand()) return;
