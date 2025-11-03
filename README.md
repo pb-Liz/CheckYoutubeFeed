@@ -20,7 +20,14 @@ Dockerコンテナ上で動作し、TypeScriptで実装されています。
 
 ## ⚙️ システム構成
 
-`graph TD   YT[TypeScript JobSchedule 5min] --> Bot[YouTube RSS Feed]   Bot --> NewFeed[NewFeed]   Bot --> LatestFeed[LatestFeed]   NewFeed[NewFeed] --> Discord[Push Discord]   LatestFeed[LatestFeed] --> YT[TypeScript JobSchedule 5min]`
+```mermaid
+graph TD
+  YT[TypeScript JobSchedule 5min] --> Bot[YouTube RSS Feed]
+  Bot --> NewFeed[NewFeed]
+  Bot --> LatestFeed[LatestFeed]
+  NewFeed[NewFeed] --> Discord[Push Discord]
+  LatestFeed[LatestFeed] --> YT[TypeScript JobSchedule 5min]
+```
 
 - RSSを5分おきに取得して比較
     
