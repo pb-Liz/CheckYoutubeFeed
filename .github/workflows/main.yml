@@ -9,6 +9,7 @@ jobs:
   deploy:
     name: Deploy via SSH to Synology
     runs-on: ubuntu-latest
+    environment: SSH_HOST
 
     steps:
       - name: Checkout repository
