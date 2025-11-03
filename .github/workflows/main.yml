@@ -30,7 +30,7 @@ jobs:
           script_stop: true
           script: |
             echo "=== Starting Deploy ==="
-            cd /volume1/docker/CheckYouTubeFeed
+            cd /volume1/docker/CheckYoutubeFeed
 
             echo "Pulling latest changes..."
             git pull origin main
