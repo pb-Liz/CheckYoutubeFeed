@@ -1,8 +1,8 @@
-import { Interaction, CacheType, MessageFlags } from "discord.js";
+import { Interaction, CacheType } from "discord.js";
 import fs from "fs";
 import path from 'path';
-import { ephemeraled } from "../main/index.js";
 import { fileURLToPath } from "url";
+import { ADMIN } from "../main";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,7 +24,7 @@ const InitCommand = async (interaction: Interaction<CacheType>) => {
     const config = loadConfig(configPath);
 
     if (config[guildId] && config[guildId] === channelId) {
-      await interaction.reply({ content: "⚠️ このチャンネルではすでに通知先が設定されています。", flags: ephemeraled ?  MessageFlags.Ephemeral : undefined });
+      await interaction.reply({ content: "⚠️ このチャンネルではすでに通知先が設定されています。"});
       return;
     } else if (config[guildId]) {
       const watchListPath = path.join(baseDir, "watchlist.json");
@@ -38,14 +38,14 @@ const InitCommand = async (interaction: Interaction<CacheType>) => {
       config[guildId] = channelId;
       saveConfig(configPath, config);
       
-      await interaction.reply({ content: `✅ このチャンネル (<#${channelId}>) を通知先に変更しました！`, flags: ephemeraled ?  MessageFlags.Ephemeral : undefined });
+      await interaction.reply({ content: `✅ このチャンネル (<#${channelId}>) を通知先に変更しました！`});
       return;
     }
     
     config[guildId] = channelId;
       saveConfig(configPath, config);
 
-    await interaction.reply({ content: `✅ このチャンネル (<#${channelId}>) を通知先に登録しました！`, flags: ephemeraled ?  MessageFlags.Ephemeral : undefined });
+    await interaction.reply({ content: `✅ このチャンネル (<#${channelId}>) を通知先に登録しました！`});
 }
 
 const RemoveSettingCommand = async (interaction: Interaction<CacheType>) => {
@@ -54,14 +54,14 @@ const RemoveSettingCommand = async (interaction: Interaction<CacheType>) => {
   try {
     const config = loadConfig(configPath);
     delete config[interaction.guildId!];
-      saveConfig(configPath, config);
+    saveConfig(configPath, config);
   } catch (err) {
     console.error("通知先解除失敗:", err);
-    await interaction.reply({ content: "⚠️ 通知先の解除に失敗しました。", flags: ephemeraled ?  MessageFlags.Ephemeral : undefined });
+    await interaction.reply({ content: `<@${ADMIN}> ⚠️ 通知先の解除に失敗しました。`});
     return;
   }
 
-  await interaction.reply({ content: `🗑️ 通知先の登録を解除しました。`, flags: ephemeraled ?  MessageFlags.Ephemeral : undefined });
+  await interaction.reply({ content: `🗑️ 通知先の登録を解除しました。`});
 }
 
 export { InitCommand, RemoveSettingCommand };

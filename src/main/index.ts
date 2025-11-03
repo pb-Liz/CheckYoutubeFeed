@@ -31,7 +31,7 @@ const CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
 const GUILD_IDs = process.env.GUILD_ID  || "";
 export const loggerLevel = () => process.env.LOGGER_LEVEL || "info";
 
-export const ADMIN = "431032922884014081";
+export const ADMIN = process.env.ADMIN || "";
 
 const GUILD_ID = GUILD_IDs.split(",");
 
@@ -45,13 +45,13 @@ const baseDir = process.env.NODE_ENV === "production"
 export const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const date = new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" });
 
-export const ephemeraled = (date < "05:00:00" && date > "22:59:59") ? false : true;
+export const ephemeraled = !(date < "05:00:00" || date > "23:00:00");
 
 if (loggerLevel() === "debug") {
   console.log("===== Debug Info =====");
   console.log(`Base Directory: ${baseDir}`);
   console.log(`Readed GUILD_IDs: ${GUILD_ID}`);
-  console.log(`Ephemeral Messages: ${ephemeraled ? "Yes" : "No"}`);
+  console.log(`Ephemeral Messages: ${ephemeraled ? "No" : "Yes"}`);
   console.log("======================");
 }
 
