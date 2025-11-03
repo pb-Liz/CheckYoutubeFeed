@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - /volume1/docker/CheckYouTubeFeed/data:/app/data    # 監視リストの永続化
+      - /volume1/docker/CheckYoutubeFeed/data:/app/data    # 監視リストの永続化
     environment:
       - TZ=Asia/Tokyo
     logging:
