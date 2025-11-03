@@ -29,6 +29,7 @@ jobs:
           port: 24
           script_stop: true
           script: |
+            export PATH=$PATH:/usr/local/bin
             echo "=== Starting Deploy ==="
             cd /volume1/docker/CheckYoutubeFeed
 
