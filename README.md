@@ -81,4 +81,3 @@ graph TD
     `/removehook url:https://www.youtube.com/@example`
     
 ---
-
