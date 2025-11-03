@@ -1,0 +1,38 @@
+name: Deploy to Synology (YouTube Bot)
+
+on:
+  push:
+    branches:
+      - main  # mainブランチにpushされた時に実行
+
+jobs:
+  deploy:
+    name: Deploy via SSH to Synology
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          script: |
+            echo "=== Starting Deploy ==="
+            cd /volume1/docker/CheckYouTubeFeed
+
+            echo "Pulling latest changes..."
+            git pull origin main
+
+            echo "Rebuilding and restarting container..."
+            docker compose down
+            docker compose up -d --build
+
+            echo "Cleaning old images..."
+            docker image prune -f
+
+            echo "=== Deploy completed successfully! ==="
