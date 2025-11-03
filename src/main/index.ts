@@ -87,7 +87,7 @@ const rest = new REST({ version: "10" }).setToken(TOKEN);
   for (const gid of Object.keys(config)) {
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, gid), { body: [] });
     console.log(`コマンドを初期化しました。 Guild ID: ${gid}`);
-    // await rest.put(Routes.applicationGuildCommands(CLIENT_ID, gid), { body: commands });
+    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, gid), { body: commands });
   }
   console.log("✅ スラッシュコマンド登録完了");
 })();
