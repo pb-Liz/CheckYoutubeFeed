@@ -12,6 +12,11 @@ jobs:
     environment: SSH_HOST
 
     steps:
+      - name: Set up Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ secrets.TS_AUTHKEY }}
+    
       - name: Checkout repository
         uses: actions/checkout@v4
 
