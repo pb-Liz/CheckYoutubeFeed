@@ -29,17 +29,27 @@ jobs:
           port: 24
           script_stop: true
           script: |
+            export PATH=$PATH:/usr/local/bin
+          
             echo "=== Starting Deploy ==="
-            cd /volume1/docker/CheckYouTubeFeed
-
+            cd /volume1/docker/CheckYoutubeFeed
+          
             echo "Pulling latest changes..."
             git pull origin main
-
+          
             echo "Rebuilding and restarting container..."
-            docker compose down
+            # 同名コンテナがあれば停止＆削除
+            if [ $(docker ps -aq -f name=youtube-bot) ]; then
+              echo "Stopping existing container..."
+              docker stop youtube-bot
+              echo "Removing existing container..."
+              docker rm youtube-bot
+            fi
+          
+            # Docker Compose で再ビルド＆起動
             docker compose up -d --build
-
+          
             echo "Cleaning old images..."
             docker image prune -f
-
+          
             echo "=== Deploy completed successfully! ==="
