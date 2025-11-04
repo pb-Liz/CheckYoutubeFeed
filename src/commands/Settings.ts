@@ -18,12 +18,15 @@ const saveConfig = (path: string, data: object) => fs.writeFileSync(path, JSON.s
 const InitCommand = async (interaction: Interaction<CacheType>) => {
   if (!interaction.isChatInputCommand()) return;
 
+    console.log(`InitCommand by ${interaction.user.globalName} in guild ${interaction.guildId}`);
+
+
     const guildId = interaction.guildId!;
     const channelId = interaction.channelId;
 
     const config = loadConfig(configPath);
 
-    if (config[guildId] && config[guildId] === channelId) {
+    if (config[guildId] === channelId) {
       await interaction.reply({ content: "⚠️ このチャンネルではすでに通知先が設定されています。"});
       return;
     } else if (config[guildId]) {
@@ -51,9 +54,13 @@ const InitCommand = async (interaction: Interaction<CacheType>) => {
 const RemoveSettingCommand = async (interaction: Interaction<CacheType>) => {
   if (!interaction.isChatInputCommand()) return;
 
+  console.log(`RemoveSettingCommand by ${interaction.user.globalName} in guild ${interaction.guildId}`);
+
   try {
     const config = loadConfig(configPath);
+    console.log(`Current config:`, config);
     delete config[interaction.guildId!];
+    console.log(`Deleted config:`, config);
     saveConfig(configPath, config);
   } catch (err) {
     console.error("通知先解除失敗:", err);

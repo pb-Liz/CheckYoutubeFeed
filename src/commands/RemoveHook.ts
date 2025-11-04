@@ -8,6 +8,9 @@ const RemoveCommand = async (
   watchlistPath: string,
 ) => {
   if (!interaction.isChatInputCommand()) return;
+
+  console.log(`RemoveHook by ${interaction.user.username} in guild ${interaction.guildId}`);
+
   const { options, channelId} = interaction;
   const url = options.getString("url", true);
   const match = url.match(/channel\/([A-Za-z0-9_-]+)/);
