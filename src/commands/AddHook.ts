@@ -21,6 +21,8 @@ const AddCommand = async (
 ) => {
   if (!interaction.isChatInputCommand()) return;
 
+  console.log(`AddHook by ${interaction.user.globalName} in guild ${interaction.guildId}`);
+
   const { options } = interaction;
   const config = loadConfig();
   const channelId = config[interaction.guildId!];

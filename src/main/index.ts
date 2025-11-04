@@ -28,12 +28,11 @@ type Result =
 
 const TOKEN = process.env.DISCORD_TOKEN || "";
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
-const GUILD_IDs = process.env.GUILD_ID  || "";
+const GUILD_ID = process.env.GUILD_ID  || "";
 export const loggerLevel = () => process.env.LOGGER_LEVEL || "info";
 
 export const ADMIN = process.env.ADMIN || "";
 
-const GUILD_ID = GUILD_IDs.split(",");
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,15 +42,10 @@ const baseDir = process.env.NODE_ENV === "production"
   : path.join(__dirname, "../data");
 
 export const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-const date = new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" });
-
-export const ephemeraled = !(date < "05:00:00" || date > "23:00:00");
 
 if (loggerLevel() === "debug") {
   console.log("===== Debug Info =====");
   console.log(`Base Directory: ${baseDir}`);
-  console.log(`Readed GUILD_IDs: ${GUILD_ID}`);
-  console.log(`Ephemeral Messages: ${ephemeraled ? "No" : "Yes"}`);
   console.log("======================");
 }
 
@@ -79,16 +73,34 @@ const commands = [
   new SlashCommandBuilder().setName("deletesetting").setDescription("通知チャンネルを削除します")
 ].map(c => c.toJSON());
 
+const testCommands = [
+  new SlashCommandBuilder().setName("addhook_test").setDescription("YouTubeチャンネルをフックに追加")
+    .addStringOption(o => o.setName("url").setDescription("チャンネルURL").setRequired(true)),
+  new SlashCommandBuilder().setName("removehook_test").setDescription("フックから削除")
+    .addStringOption(o => o.setName("url").setDescription("チャンネルURL").setRequired(true)),
+  new SlashCommandBuilder().setName("showhooks_test").setDescription("現在のフックリストを表示"),
+  new SlashCommandBuilder().setName("init_test").setDescription("通知チャンネルを登録します"),
+  new SlashCommandBuilder().setName("deletesetting_test").setDescription("通知チャンネルを削除します")
+].map(c => c.toJSON());
+
 const rest = new REST({ version: "10" }).setToken(TOKEN);
 
 (async () => {
   
-  const config = loadConfig();
-  for (const gid of Object.keys(config)) {
-    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, gid), { body: [] });
-    console.log(`コマンドを初期化しました。 Guild ID: ${gid}`);
-    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, gid), { body: commands });
+  if (process.env.NODE_ENV === "production") {
+    const config = loadConfig();
+    for (const gid of Object.keys(config)) {
+      await rest.put(Routes.applicationGuildCommands(CLIENT_ID, gid), { body: [] });
+      console.log(`コマンドを初期化しました。 Guild ID: ${gid}`);
+      await rest.put(Routes.applicationGuildCommands(CLIENT_ID, gid), { body: commands });
+    }
+  } else {
+    // 開発環境ではテストサーバーにのみ登録
+    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: [] });
+    console.log(`コマンドを初期化しました。 Guild ID: ${GUILD_ID}（テストサーバー）`);
+    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: testCommands });
   }
+  
   console.log("✅ スラッシュコマンド登録完了");
 })();
 
@@ -102,7 +114,7 @@ client.on("interactionCreate", async (interaction: Interaction<CacheType>) => {
     ? JSON.parse(fs.readFileSync(watchlistPath, "utf8"))
     : {};
 
-  if (commandName === "addhook") {
+  if (commandName.includes("addhook")) {
     try {
       await AddCommand(interaction, list, watchlistPath);
     } catch (err) {
@@ -112,40 +124,40 @@ client.on("interactionCreate", async (interaction: Interaction<CacheType>) => {
   
   }
 
-  if (commandName === "removehook") {
+  if (commandName.includes("removehook")) {
     try {
       await RemoveCommand(interaction, list, watchlistPath);
     } catch (err) {
       console.error("フック削除失敗:", err);
-      await interaction.reply({ content: `<@${ADMIN}> ⚠️ フックの削除に失敗しました。` });
+      await interaction.followUp({ content: `<@${ADMIN}> ⚠️ フックの削除に失敗しました。` });
     }
     
   }
 
-  if (commandName === "showhooks") {
+  if (commandName.includes("showhooks")) {
     try {
       await ListCommand(interaction, list);
     } catch (err) {
       console.error("フック表示失敗:", err);
-      await interaction.reply({ content: `<@${ADMIN}> ⚠️ フックの表示に失敗しました。` });
+      await interaction.followUp({ content: `<@${ADMIN}> ⚠️ フックの表示に失敗しました。` });
     }
   }
 
-  if (commandName === "init") {
+  if (commandName.includes("init")) {
     try {
       await InitCommand(interaction);
     } catch (err) {
       console.error("通知先登録失敗:", err);
-      await interaction.reply({ content: `<@${ADMIN}> ⚠️ 通知先の登録に失敗しました。` });
+      await interaction.followUp({ content: `<@${ADMIN}> ⚠️ 通知先の登録に失敗しました。` });
     }
   }
 
-  if (commandName === "deletesetting") {
+  if (commandName.includes("deletesetting")) {
     try {
       await RemoveSettingCommand(interaction);
     } catch (err) {
       console.error("通知先解除失敗:", err);
-      await interaction.reply({ content: `<@${ADMIN}> ⚠️ 通知先の解除に失敗しました。` });
+      await interaction.followUp({ content: `<@${ADMIN}> ⚠️ 通知先の解除に失敗しました。` });
     }
   }
 });
