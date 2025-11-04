@@ -20,7 +20,6 @@ const InitCommand = async (interaction: Interaction<CacheType>) => {
 
     console.log(`InitCommand by ${interaction.user.globalName} in guild ${interaction.guildId}`);
 
-
     const guildId = interaction.guildId!;
     const channelId = interaction.channelId;
 

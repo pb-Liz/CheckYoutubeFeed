@@ -9,7 +9,7 @@ const RemoveCommand = async (
 ) => {
   if (!interaction.isChatInputCommand()) return;
 
-  console.log(`RemoveHook by ${interaction.user.username} in guild ${interaction.guildId}`);
+  console.log(`RemoveHook by ${interaction.user.globalName} in guild ${interaction.guildId}`);
 
   const { options, channelId} = interaction;
   const url = options.getString("url", true);

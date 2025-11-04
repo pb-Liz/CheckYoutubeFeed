@@ -44,9 +44,7 @@ const baseDir = process.env.NODE_ENV === "production"
 export const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 if (loggerLevel() === "debug") {
-  console.log("===== Debug Info =====");
   console.log(`Base Directory: ${baseDir}`);
-  console.log("======================");
 }
 
 const configPath = path.join(baseDir, "guildConfigs.json");
@@ -98,7 +96,7 @@ const rest = new REST({ version: "10" }).setToken(TOKEN);
     // 開発環境ではテストサーバーにのみ登録
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: [] });
     console.log(`コマンドを初期化しました。 Guild ID: ${GUILD_ID}（テストサーバー）`);
-    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: testCommands });
+    // await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: testCommands });
   }
   
   console.log("✅ スラッシュコマンド登録完了");
