@@ -60,7 +60,7 @@ const startWatcher = (client: Client) => {
 
           const channel = client.channels.cache.get(discordChannelId) as TextChannel;
           await channel.send(`📢 **${feed.title}** が新しい動画を投稿しました！\n${latest.link}`);
-          console.log("📢 **${feed.title}** が新しい動画を投稿しました！");
+          console.log(`📢 **${feed.title}** が新しい動画を投稿しました！`);
         } catch (err) {
           console.error(`RSS取得失敗 (${ytId}):`, err);
         }
